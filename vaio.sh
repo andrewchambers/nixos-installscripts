@@ -41,7 +41,7 @@ cat  << EOF > /mnt/etc/nixos/configuration.nix
     ./hardware-configuration.nix
   ];
 
-  boot.loader.grub.devices = "/dev/sda";
+  boot.loader.grub.device = "/dev/sda";
   boot.initrd.supportedFilesystems = ["ext4" "btrfs"];
   boot.initrd.kernelModules = ["dm-snapshot"];
   boot.cleanTmpDir = true;
