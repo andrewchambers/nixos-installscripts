@@ -7,7 +7,7 @@ set -x
 # configure this!
 password="abc123"
 
-sgdisk -o -g -n 1::+1M -t 1:ef02 -n 2::+1G -t 2:8300 -n 3:: -t 3:8300 /dev/sda
+sgdisk -o -g -n 1::+200M -t 1:ef02 -n 2::+800M -t 2:8300 -n 3:: -t 3:8300 /dev/sda
 
 echo "$password" | cryptsetup luksFormat /dev/sda3
 echo "$password" | cryptsetup luksOpen /dev/sda3 enc-pv1
@@ -34,6 +34,6 @@ mount /dev/sda2 /mnt/boot
 
 nixos-generate-config --root /mnt
 
-echo "remember to add LVM devices to your nix config!"
+echo "remember to add LVM devices and btrfs to your nix config!"
 
 
