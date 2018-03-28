@@ -34,6 +34,46 @@ mount /dev/sda2 /mnt/boot
 
 nixos-generate-config --root /mnt
 
-echo "remember to add LVM devices and btrfs to your nix config!"
+cat  << EOF > /mnt/etc/nixos/configuration.nix
+ {
+  imports =
+  [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
+
+  boot.loader.grub.devices = "/dev/sda";
+  boot.initrd.supportedFilesystems = ["ext4" "btrfs"];
+  boot.initrd.kernelModules = ["dm-snapshot"];
+  boot.cleanTmpDir = true;
+  boot.kernelModules = [ "dm-snapshot" ];
+  boot.initrd.luks.devices = [
+    { 
+      name = "enc-pv1";
+      device = "/dev/sda3";
+    }
+    { 
+      name = "enc-pv2";
+      device = "/dev/sdb";
+    }
+  ];
 
 
+  networking.hostName = "nixos";
+  time.timeZone = "NZ";
+
+  nixpkgs.config.allowUnfree = true;
+
+  services.openssh.enable = true;
+  services.openssh.passwordAuthentication = false;
+  #services.xserver.enable = true;
+  #services.xserver.windowManager.i3.enable = true;
+
+  # This value determines the NixOS release with which your system is to be
+  # compatible, in order to avoid breaking some software such as database
+  # servers. You should change this only after NixOS release notes say you
+  # should.
+  system.stateVersion = "17.09"; # Did you read the comment?
+}
+EOF
+
+nixos-install
